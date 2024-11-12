@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-extern pros::Mutex selected_routine_mutex;
+inline pros::Mutex selected_routine_mutex;
 namespace rd {
 
 /**
