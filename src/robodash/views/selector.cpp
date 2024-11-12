@@ -43,9 +43,9 @@ void rd::Selector::sd_save() {
 
 	// Write save data
 	selected_routine_mutex.take();
-	const bool is_null_ptr = selected_routine != nullptr;
+	const bool is_valid_ptr = selected_routine != nullptr;
 	selected_routine_mutex.give();
-	if (is_null_ptr) {
+	if (is_valid_ptr) {
 		const char* selector_name = this->name.c_str();
 		selected_routine_mutex.take();
 		const char* routine_name = selected_routine->name.c_str();
@@ -93,10 +93,10 @@ void rd::Selector::sd_load() {
 	}
 
 	selected_routine_mutex.take();
-	const bool is_routine_null = selected_routine != nullptr;
+	const bool is_valid_ptr = selected_routine != nullptr;
 	selected_routine_mutex.give();
 
-	if (is_routine_null) {
+	if (is_valid_ptr) {
 		// Update routine label
 		char label_str[strlen(saved_name) + 20];
 		selected_routine_mutex.take();
