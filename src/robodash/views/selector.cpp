@@ -42,7 +42,7 @@ void rd::Selector::sd_save() {
 	fputs(new_text, save_file);
 
 	// Write save data
-	if (selected_routine != nullptr) {
+	if (selected_routine_mutex.take(), selected_routine != nullptr) {
 		const char *selector_name = this->name.c_str();
 		const char *routine_name = selected_routine->name.c_str();
 
@@ -50,6 +50,7 @@ void rd::Selector::sd_save() {
 		sprintf(file_data, "%s: %s\n", selector_name, routine_name);
 		fputs(file_data, save_file);
 	}
+	selected_routine_mutex.give();
 
 	fclose(save_file);
 }
@@ -73,15 +74,21 @@ void rd::Selector::sd_load() {
 
 	// None selected or not our selector
 	if (strcmp(saved_name, "") == 0 || saved_selector != this->name) {
+		selected_routine_mutex.take();
 		selected_routine = nullptr;
+		selected_routine_mutex.give();
 		return;
 	}
 
 	for (rd::Selector::routine_t &r : routines) {
-		if (strcmp(r.name.c_str(), saved_name) == 0) selected_routine = &r;
+		if (strcmp(r.name.c_str(), saved_name) == 0) {
+			selected_routine_mutex.take();
+			selected_routine = &r;
+			selected_routine_mutex.give();
+		}
 	}
 
-	if (selected_routine != nullptr) {
+	if (selected_routine_mutex.take(), selected_routine != nullptr) {
 		// Update routine label
 		char label_str[strlen(saved_name) + 20];
 		sprintf(label_str, "Selected routine:\n%s", selected_routine->name.c_str());
@@ -93,6 +100,7 @@ void rd::Selector::sd_load() {
 		lv_img_set_src(this->selected_img, selected_routine->img.c_str());
 		lv_obj_clear_flag(this->selected_img, LV_OBJ_FLAG_HIDDEN);
 	}
+	selected_routine_mutex.give();
 }
 
 // ============================== UI Callbacks ============================== //
@@ -102,8 +110,9 @@ void rd::Selector::select_cb(lv_event_t *event) {
 	rd::Selector::routine_t *routine = (rd::Selector::routine_t *)lv_event_get_user_data(event);
 	rd::Selector *selector = (rd::Selector *)lv_obj_get_user_data(obj);
 	if (selector == nullptr) return;
-
+selected_routine_mutex.take();
 	selector->selected_routine = routine;
+	selected_routine_mutex.give();
 	selector->sd_save();
 
 	if (routine == nullptr) {
@@ -134,7 +143,9 @@ rd::Selector::Selector(std::vector<routine_t> autons) : Selector("Auton Selector
 
 rd::Selector::Selector(std::string name, std::vector<routine_t> new_routines) {
 	this->name = name;
+	selected_routine_mutex.take();
 	this->selected_routine = nullptr;
+	selected_routine_mutex.give();
 
 	// ----------------------------- Create UI ----------------------------- //
 
@@ -209,8 +220,10 @@ rd::Selector::Selector(std::string name, std::vector<routine_t> new_routines) {
 // ============================= Other Methods ============================= //
 
 void rd::Selector::run_auton() {
+	selected_routine_mutex.take();
 	if (selected_routine == nullptr) return; // If commanded to do nothing then return
 	selected_routine->action();
+	selected_routine_mutex.give();
 }
 
 void rd::Selector::focus() { rd_view_focus(this->view); }
