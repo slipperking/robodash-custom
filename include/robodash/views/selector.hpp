@@ -6,10 +6,12 @@
 
 #pragma once
 #include "robodash/api.h"
+#include "api.h"
 #include <functional>
 #include <string>
 #include <vector>
 
+extern pros::Mutex selected_routine_mutex;
 namespace rd {
 
 /**
