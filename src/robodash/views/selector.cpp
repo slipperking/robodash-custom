@@ -92,27 +92,17 @@ void rd::Selector::sd_load() {
 		}
 	}
 
-	selected_routine_mutex.take();
-	const bool is_valid_ptr = selected_routine != nullptr;
-	selected_routine_mutex.give();
-
-	if (is_valid_ptr) {
+	if (selected_routine != nullptr) {
 		// Update routine label
 		char label_str[strlen(saved_name) + 20];
-		selected_routine_mutex.take();
 		sprintf(label_str, "Selected routine:\n%s", selected_routine->name.c_str());
-		selected_routine_mutex.give();
 		lv_label_set_text(selected_label, label_str);
 		lv_obj_align(selected_label, LV_ALIGN_CENTER, 120, 0);
 
-		selected_routine_mutex.take();
 		const bool is_empty_img = selected_routine->img.empty();
-		selected_routine_mutex.give();
 		if (is_empty_img || !pros::usd::is_installed()) return;
 
-		selected_routine_mutex.take();
 		lv_img_set_src(this->selected_img, selected_routine->img.c_str());
-		selected_routine_mutex.give();
 		lv_obj_clear_flag(this->selected_img, LV_OBJ_FLAG_HIDDEN);
 	}
 }
@@ -234,13 +224,8 @@ rd::Selector::Selector(std::string name, std::vector<routine_t> new_routines) {
 // ============================= Other Methods ============================= //
 
 void rd::Selector::run_auton() {
-	selected_routine_mutex.take();
-	const bool is_null_ptr = selected_routine == nullptr;
-	selected_routine_mutex.give();
-	if (is_null_ptr) return; // If commanded to do nothing then return
-	selected_routine_mutex.take();
+	if (selected_routine == nullptr) return; // If commanded to do nothing then return
 	selected_routine->action();
-	selected_routine_mutex.give();
 }
 
 void rd::Selector::focus() { rd_view_focus(this->view); }
