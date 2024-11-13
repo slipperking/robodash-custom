@@ -42,14 +42,9 @@ void rd::Selector::sd_save() {
 	fputs(new_text, save_file);
 
 	// Write save data
-	selected_routine_mutex.take();
-	const bool is_valid_ptr = selected_routine != nullptr;
-	selected_routine_mutex.give();
-	if (is_valid_ptr) {
+	if (selected_routine != nullptr) {
 		const char* selector_name = this->name.c_str();
-		selected_routine_mutex.take();
 		const char* routine_name = selected_routine->name.c_str();
-		selected_routine_mutex.give();
 
 		char file_data[strlen(selector_name) + strlen(routine_name) + 2];
 		sprintf(file_data, "%s: %s\n", selector_name, routine_name);
