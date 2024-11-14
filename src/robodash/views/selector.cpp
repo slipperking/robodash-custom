@@ -134,17 +134,20 @@ void rd::Selector::select_cb(lv_event_t* event) {
 
 	lv_img_set_src(selector->selected_img, routine->img.c_str());
 	lv_obj_clear_flag(selector->selected_img, LV_OBJ_FLAG_HIDDEN);
+	selector->switch_cb();
 }
 
 // ============================== Constructor ============================== //
 
-rd::Selector::Selector(std::vector<routine_t> autons) : Selector("Auton Selector", autons) {}
+rd::Selector::Selector(std::vector<routine_t> autons, routine_action_t switch_cb) : Selector("Auton Selector", autons, switch_cb) {}
 
-rd::Selector::Selector(std::string name, std::vector<routine_t> new_routines) {
+rd::Selector::Selector(std::string name, std::vector<routine_t> new_routines, routine_action_t switch_cb) {
 	this->name = name;
 	selected_routine_mutex.take();
 	this->selected_routine = nullptr;
 	selected_routine_mutex.give();
+
+	this->switch_cb = switch_cb;
 
 	// ----------------------------- Create UI ----------------------------- //
 

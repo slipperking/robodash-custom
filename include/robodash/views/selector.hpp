@@ -48,13 +48,13 @@ class Selector {
 	 * @param name Name of the autonomous selector
 	 * @param autons Vector of autonomous rotuines
 	 */
-	Selector(std::string name, std::vector<routine_t> autons);
+	Selector(std::string name, std::vector<routine_t> autons, routine_action_t switch_cb = [](){});
 
 	/**
 	 * @brief Create autonomous selector
 	 * @param autons Vector of autonomous rotuines
 	 */
-	Selector(std::vector<routine_t> autons);
+	Selector(std::vector<routine_t> autons, routine_action_t switch_cb = [](){});
 
 	/**
 	 * @brief Run selected auton
@@ -74,6 +74,7 @@ class Selector {
 
   private:
 	rd_view_t *view;
+	routine_action_t switch_cb;
 
 	lv_obj_t *select_cont;
 	lv_obj_t *selected_label;
