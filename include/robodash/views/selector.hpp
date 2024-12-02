@@ -11,7 +11,6 @@
 #include <string>
 #include <vector>
 
-inline pros::Mutex selected_routine_mutex;
 namespace rd {
 
 /**
@@ -67,6 +66,7 @@ class Selector {
 	void focus();
 
 	rd::Selector::routine_t *selected_routine;
+    pros::Mutex selected_routine_mutex;
 	void select_cb_evaluate(rd::Selector::routine_t *, rd::Selector *);
 
 	static void select_cb(lv_event_t *event);

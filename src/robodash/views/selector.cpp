@@ -106,9 +106,9 @@ void rd::Selector::sd_load() {
 
 void rd::Selector::select_cb_evaluate(rd::Selector::routine_t *routine, rd::Selector *selector) {
 	if (selector == nullptr) return;
-	selected_routine_mutex.take();
+	selector->selected_routine_mutex.take();
 	selector->selected_routine = routine;
-	selected_routine_mutex.give();
+	selector->selected_routine_mutex.give();
 	selector->sd_save();
 
 	if (routine == nullptr) {
@@ -150,9 +150,9 @@ rd::Selector::Selector(
     std::string name, std::vector<routine_t> new_routines, routine_action_t switch_cb
 ) {
 	this->name = name;
-	selected_routine_mutex.take();
+	this->selected_routine_mutex.take();
 	this->selected_routine = nullptr;
-	selected_routine_mutex.give();
+	this->selected_routine_mutex.give();
 
 	this->switch_cb = switch_cb;
 
