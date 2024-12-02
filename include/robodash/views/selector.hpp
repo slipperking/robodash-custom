@@ -5,8 +5,8 @@
  */
 
 #pragma once
-#include "robodash/api.h"
 #include "api.h"
+#include "robodash/api.h"
 #include <functional>
 #include <string>
 #include <vector>
@@ -48,13 +48,13 @@ class Selector {
 	 * @param name Name of the autonomous selector
 	 * @param autons Vector of autonomous rotuines
 	 */
-	Selector(std::string name, std::vector<routine_t> autons, routine_action_t switch_cb = [](){});
+	Selector(std::string name, std::vector<routine_t> autons, routine_action_t switch_cb = []() {});
 
 	/**
 	 * @brief Create autonomous selector
 	 * @param autons Vector of autonomous rotuines
 	 */
-	Selector(std::vector<routine_t> autons, routine_action_t switch_cb = [](){});
+	Selector(std::vector<routine_t> autons, routine_action_t switch_cb = []() {});
 
 	/**
 	 * @brief Run selected auton
@@ -67,6 +67,7 @@ class Selector {
 	void focus();
 
 	rd::Selector::routine_t *selected_routine;
+	void select_cb_evaluate(rd::Selector::routine_t *, rd::Selector *);
 
 	static void select_cb(lv_event_t *event);
 
